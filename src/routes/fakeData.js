@@ -14,19 +14,21 @@ module.exports = function (server, logger) {
 		//	return next(err);
 		//}
 
-		var item = {"id": {"N": 1234},"title": {"S": "Foobar"}};
+		var item1 = { id: '1',
+			date: (new Date).getTime(),
+			sha: '3d2d69633ffa5368c7971cf15c91d2eb',
+			usr: 'spolu',
+			val: [5, 6, 7] };
 
-		console.log(item);
-		var params = {TableName: 'opensalary-data',
-			Item: item
-		};
-		console.log(params);
+		// Simple
 
-		ddb.putItem(params, function(err, data) {
-    if (err)
-			console.log(err); // an error occurred
-    else
-			console.log(data); // successful response
+		ddb.putItem('opensalary-data', item1, {}, function(err, res, cap) {
+			if (err)
+				console.log(err);
+			else {
+				console.log('PutItem: ' + cap);
+				console.log(res);
+			}
 		});
 	});
 };
