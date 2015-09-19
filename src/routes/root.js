@@ -1,7 +1,8 @@
 /* global __dirname:true */
 var restify = require('restify'),
 	id = require('uuid').v4,
-	https = require('https');
+	https = require('https')
+	model = require('../models/formData');
 
 module.exports = function (server) {
 	server.get('/', function (req, res, next) {
@@ -13,7 +14,9 @@ module.exports = function (server) {
 				body += d;
 			});
 			response.on('end', function() {
-				res.send(JSON.parse(body));
+				var data = model.create(JSON.parse(body));
+				console.info(data);
+				res.send(data);
 				return next();
 				// Data reception is done, do whatever with it!
 				//var parsed = JSON.parse(body);
