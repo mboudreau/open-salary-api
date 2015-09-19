@@ -4,6 +4,9 @@
 
 var cluster = require('cluster'),
     app = require('./app.js'),
+    ddb = require('dynamodb').ddb({ accessKeyId: 'AKIAI5LQN2STTRV3QTGQ',
+      secretAccessKey: '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',
+      endpoint: 'dynamodb.ap-southeast-2.amazonaws.com' }),
     logging = require('./logging.js');
 
 function Server(port, production) {
@@ -79,3 +82,26 @@ Server.prototype.stop = function stop() {
 module.exports = function (port, production) {
     return new Server(port, production)
 };
+
+function ListTables() {
+  return ddb.listTables({}, function(err, res) {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log(res);
+  }
+  });
+}
+
+function ListRecords(tableName) {
+    ddb.scan(tableName, {}, function(err, res) {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(res);
+    }
+ });
+}
+
+ListTables();
+ListRecords('opensalary-data');
