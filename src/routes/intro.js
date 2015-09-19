@@ -1,7 +1,7 @@
 /* global __dirname:true */
 var restify = require('restify');
 
-module.exports = function (server, logger) {
+module.exports = function (server) {
 	server.get('/intro', function (req, res, next) {
 		var query = req.params.q;
 		if (!query) { // throw error if no queries present

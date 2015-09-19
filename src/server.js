@@ -4,16 +4,12 @@
 
 var cluster = require('cluster'),
     app = require('./app.js'),
-    ddb = require('dynamodb').ddb({ accessKeyId: 'AKIAI5LQN2STTRV3QTGQ',
-      secretAccessKey: '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',
-      endpoint: 'dynamodb.ap-southeast-2.amazonaws.com' }),
-    logging = require('./logging.js');
+    ddb = require('./services/dynamodb');
 
 function Server(port, production) {
     this.port = port || 8000;
     this.production = production || false;
     var pkg = require('../package.json');
-    this.logger = logging.createLogger({name: pkg.name + '-' + port, dir: 'logs', level: 'debug'});
     this.server = null;
 }
 
@@ -27,11 +23,11 @@ Server.prototype.start = function () {
 
     function spawnWorker() {
         // create servers
-        this.server = app.createServer(this.logger);
+        this.server = app.createServer();
 
         // start listening
         this.server.listen(this.port, (function () {
-            this.logger.info('%s listening at %s', this.server.name, this.server.url);
+            console.info('%s listening at %s', this.server.name, this.server.url);
         }).bind(this));
     }
 
@@ -40,7 +36,7 @@ Server.prototype.start = function () {
         if (cluster.isMaster) {
             var cpus = require('os').cpus().length;
 
-            this.logger.info('Starting master, pid ' + process.pid + ', spawning ' + cpus + ' workers');
+            console.info('Starting master, pid ' + process.pid + ', spawning ' + cpus + ' workers');
 
             // fork workers
             for (var i = 0; i < cpus; i++) {
@@ -48,12 +44,12 @@ Server.prototype.start = function () {
             }
 
             cluster.on('listening', (function (worker) {
-                this.logger.info('Worker ' + worker.id + ' started');
+                console.info('Worker ' + worker.id + ' started');
             }).bind(this));
 
             // if a worker dies, respawn
             cluster.on('death', (function (worker) {
-                this.logger.warn('Worker ' + worker.id + ' died, restarting...');
+                console.warn('Worker ' + worker.id + ' died, restarting...');
                 cluster.fork();
             }).bind(this));
 
@@ -103,5 +99,5 @@ function ListRecords(tableName) {
  });
 }
 
-ListTables();
-ListRecords('opensalary-data');
+//ListTables();
+//ListRecords('opensalary-data');
