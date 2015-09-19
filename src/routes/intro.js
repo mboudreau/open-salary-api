@@ -2,7 +2,7 @@
 var restify = require('restify');
 
 module.exports = function (server, logger) {
-	server.get('/search', function (req, res, next) {
+	server.get('/intro', function (req, res, next) {
 		var query = req.params.q;
 		if (!query) { // throw error if no queries present
 			var err = new restify.errors.InternalServerError('oh noes! Out of queries.');
