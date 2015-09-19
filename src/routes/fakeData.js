@@ -6,24 +6,26 @@ var restify = require('restify'),
 
 module.exports = function (server, logger) {
 	server.get('/fakeData', function (req, res, next) {
-		//var data = req.params.d;
-		//if (!data) { // throw error if no queries present
-		//	var err = new restify.errors.InternalServerError('oh noes! Out of queries.');
-		//	return next(err);
-		//}
-
 		var item1 = { id: '1',
 			date: (new Date).getTime(),
 			sha: '3d2d69633ffa5368c7971cf15c91d2eb',
 			usr: 'spolu',
 			val: [5, 6, 7] };
+		var data = [];
+		data.push({'PutRequest' : {'Item' :
+			{'id'       : { 'S' : '1' },
+			'username' : { 'S' : 'peeps' },
+			'logins'   : { 'N' : '0' },
+			'password' : { 'S' : '$2a$10$QfFcIJohati4wvwc9OuFg.IXvsUH6N5ZRmkYxky.5Vh2wGYqvM6Pi' },
+			},
+		},});
 
-		ddb.putItem('opensalary-data', item1, {}, function(err, res, cap) {
+		// Simple
+		ddb.batchWriteItem('opensalary-data', data {}, function(err, res, cap) {
 			if (err)
 				console.log(err);
 			else {
 				console.log('PutItem: ' + cap);
-				console.log(res);
 			}
 		});
 	});
